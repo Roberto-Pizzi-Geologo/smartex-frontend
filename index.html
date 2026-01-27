@@ -553,7 +553,8 @@
       addMessage("user", textForConversation);
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/chat", {
+        // chiamata chat
+	const response = await fetch("https://smartex-backend.onrender.com/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -613,7 +614,8 @@
       formData.append("file", file);
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/upload", {
+        // chiamata upload
+	const response = await fetch("https://smartex-backend.onrender.com/upload", {
           method: "POST",
           body: formData
         });
