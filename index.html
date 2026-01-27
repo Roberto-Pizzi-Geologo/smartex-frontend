@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SmartEx | Emergency Exercise Assistant Platform</title>
+
+  <!-- Favicon: small logo icon for browser tab -->
+  <link rel="icon" type="image/png" href="smartex-favicon.png" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff; /* white page background */
+    }
+    header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 16px;
+    }
+    header img {
+      height: 100px; /* larger logo */
+      width: auto;
+    }
+    header .titles {
+      display: flex;
+      flex-direction: column;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+    .subtitle {
+      color: #555;
+      margin-top: 4px;
+      font-size: 0.95rem;
+    }
+    .subtitle-small {
+      font-size: 0.8rem;
+    }
+    .subtitle-italic {
+      font-style: italic;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 50% + 50% */
+      gap: 20px;
+    }
+
+    .section {
+      background-color: #4E95D9; /* blue boxes */
+      color: #ffffff;            /* white text in boxes */
+      border-radius: 8px;
+      border: 1px solid #4E95D9;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+
+    .section h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      margin-bottom: 8px;
+    }
+    .project-grid label {
+      display: block;
+      font-size: 0.85rem;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+    .project-grid input,
+    .project-grid select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+      font-size: 0.9rem;
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    button {
+      padding: 10px 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #f5f5f5;
+      text-align: left;
+      font-size: 0.95rem;
+      color: #000000;
+    }
+    button:hover {
+      background-color: #e7e7e7;
+    }
+    #sendBtn {
+      padding: 10px 18px;
+      border-radius: 6px;
+      border: 1px solid #007acc;
+      background-color: #008CBA;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    #sendBtn:hover {
+      background-color: #0074a1;
+    }
+    .secondary-btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #888;
+      background-color: #ffffff;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #000000;
+    }
+    .secondary-btn:hover {
+      background-color: #f0f0f0;
+    }
+
+    .selected-mode {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      margin-bottom: 4px;
+      padding: 8px;
+      box-sizing: border-box;
+      font-family: inherit;
+      color: #000000;
+    }
+
+    #conversationContainer {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #ffffff;
+      color: #000000;
+      padding: 12px;
+      min-height: 200px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+    .user {
+      background-color: #d9edf7;
+      align-self: flex-end;
+    }
+    .assistant {
+      background-color: #f7f7f7;
+      border: 1px solid #e0e0e0;
+    }
+    .message-label {
+      font-weight: bold;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+    }
+    .message-time {
+      font-size: 0.75rem;
+      color: #777;
+      margin-top: 4px;
+      text-align: right;
+    }
+    .conversation-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    #projectContextBox {
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      padding: 8px;
+      min-height: 80px;
+      background-color: #ffffff;
+      color: #000000;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+    #materialsList {
+      padding-left: 18px;
+      font-size: 0.85rem;
+    }
+    #materialsList li {
+      margin-bottom: 4px;
+    }
+
+    .materials-note {
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Put smartex-logo.png in the same folder, or change the filename here -->
+    <img src="smartex-logo.png" alt="SmartEx logo" />
+    <div class="titles">
+      <h1>Emergency Exercise Assistant Platform</h1>
+      <div class="subtitle subtitle-small">- Enhanced by Artificial Intelligence -</div>
+      <div class="subtitle subtitle-italic">
+        <em>Select what you want to do, optionally add details and upload documents, then start a conversation with SmartEx.</em>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Left column: project + chat + materials -->
+    <div>
+      <div class="section">
+        <h3>Exercise project</h3>
+        <div class="project-grid">
+          <div>
+            <label for="projectName">Project name</label>
+            <input id="projectName" type="text" placeholder="e.g. Flood TTX 2026 – Municipality X" />
+          </div>
+          <div>
+            <label for="projectOrg">Lead Organisation / authority</label>
+            <input id="projectOrg" type="text" placeholder="e.g. City of X, Civil Protection Dept." />
+          </div>
+          <div>
+            <label for="projectType">Exercise type</label>
+            <select id="projectType">
+              <option value="">-- not specified --</option>
+              <option value="tabletop">Tabletop</option>
+              <option value="drill">Drill</option>
+              <option value="functional">Functional</option>
+              <option value="full_scale">Full scale</option>
+              <option value="other">Other / mixed</option>
+            </select>
+          </div>
+          <div>
+            <label for="projectDate">Planned exercise date</label>
+            <input id="projectDate" type="text" placeholder="e.g. 2026-03-15" />
+          </div>
+        </div>
+        <button class="secondary-btn" onclick="saveProject()">Save project locally</button>
+        <button class="secondary-btn" onclick="newProject()">New project</button>
+      </div>
+
+      <div class="section">
+        <h3>What do you want SmartEx to help with?</h3>
+
+        <div class="buttons">
+          <button onclick="selectMode('new_exercise', 'Start a new emergency exercise from scratch')">
+            Start a new emergency exercise from scratch
+          </button>
+          <button onclick="selectMode('objectives', 'Help me define objectives and capabilities for an exercise')">
+            Help me define objectives and capabilities for an exercise
+          </button>
+          <button onclick="selectMode('design', 'Design the structure and roles for a tabletop exercise')">
+            Design the structure and roles for a tabletop exercise
+          </button>
+          <button onclick="selectMode('scenario_mel', 'Generate a narrative scenario and MEL for my context')">
+            Generate a narrative scenario and MEL for my context
+          </button>
+          <button onclick="selectMode('evaluation', 'Evaluate an exercise I have already run and draft an After-Action Report')">
+            Evaluate an exercise I have already run and draft an After-Action Report
+          </button>
+        </div>
+
+        <div class="selected-mode" id="selectedMode">
+          Selected action: Start a new emergency exercise from scratch
+        </div>
+
+        <h3>Optional: add extra details or questions</h3>
+        <textarea
+          id="userMessage"
+          placeholder="Describe your organisation, scenario, previous exercises, or specific questions..."></textarea>
+
+        <!-- Materials / documents -->
+        <h3>Materials / documents</h3>
+        <p class="materials-note">
+          Upload documents linked to this exercise (plans, procedures, past AARs, checklists…). SmartEx can analyse them only when you explicitly ask for it, and you can request that the exercise design and outputs be aligned with specific standards or reference documents you indicate.<br />
+          <small>
+            <strong>Important notice</strong><br />
+            By uploading a file, you confirm that you are legally allowed to share its content for analysis and that it does not contain confidential or sensitive personal data.
+          </small>
+        </p>
+        <input type="file" id="materialsInput" />
+        <button class="secondary-btn" onclick="uploadMaterial()">Upload material</button>
+        <ul id="materialsList"></ul>
+
+        <button id="sendBtn" onclick="sendToSmartEx()">Send to SmartEx</button>
+      </div>
+    </div>
+
+    <!-- Right column: context + conversation + download/export -->
+    <div>
+      <div class="section">
+        <h3>Exercise context summary</h3>
+        <div id="projectContextBox">No project information saved yet.</div>
+      </div>
+
+      <div class="section">
+        <h3>Conversation</h3>
+        <div id="conversationContainer" class="conversation-wrapper">
+          <!-- populated via JS -->
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Download &amp; Export</h3>
+        <div class="actions-row">
+          <button class="secondary-btn" onclick="downloadConversationPDF()">Download conversation as PDF</button>
+          <button class="secondary-btn" onclick="downloadLastReply()">Download last reply as text document</button>
+          <button class="secondary-btn" onclick="exportDossierZip()">Export exercise dossier (ZIP)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jsPDF for conversation PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- JSZip for exercise dossier ZIP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <script>
+    let currentMode = "new_exercise";
+    let currentModeDescription = "Start a new emergency exercise from scratch";
+
+    let currentProject = {
+      name: "",
+      organisation: "",
+      exercise_type: "",
+      exercise_date: "",
+    };
+
+    let conversation = []; // { role: 'user'|'assistant', text: '...', time: Date }
+    let uploadedFiles = []; // filenames uploaded in this session (for display only)
+
+    function getProjectHeaderLines() {
+      const { name, organisation, exercise_type, exercise_date } = currentProject;
+      const lines = [];
+      if (name) lines.push("Project name: " + name);
+      if (organisation) lines.push("Lead organisation / authority: " + organisation);
+      if (exercise_type) lines.push("Exercise type: " + exercise_type);
+      if (exercise_date) lines.push("Planned date: " + exercise_date);
+      return lines;
+    }
+
+    function renderProjectContext() {
+      const box = document.getElementById("projectContextBox");
+      const headerLines = getProjectHeaderLines();
+      if (headerLines.length === 0) {
+        box.textContent = "No project information saved yet.";
+        return;
+      }
+      box.textContent = headerLines.join("\n");
+    }
+
+    function saveProject() {
+      const name = document.getElementById("projectName").value.trim();
+      const organisation = document.getElementById("projectOrg").value.trim();
+      const type = document.getElementById("projectType").value;
+      const date = document.getElementById("projectDate").value.trim();
+
+      currentProject = {
+        name,
+        organisation,
+        exercise_type: type,
+        exercise_date: date,
+      };
+
+      // Save to localStorage for later reuse
+      try {
+        localStorage.setItem("smartexProject", JSON.stringify(currentProject));
+      } catch (e) {
+        console.warn("Could not save project to localStorage:", e);
+      }
+
+      renderProjectContext();
+      addMessage("assistant", "Project information has been saved locally.");
+    }
+
+    function newProject() {
+      const confirmed = confirm(
+        "Are you sure? This will clear project data and session info."
+      );
+      if (!confirmed) {
+        return;
+      }
+
+      // Reset project object
+      currentProject = {
+        name: "",
+        organisation: "",
+        exercise_type: "",
+        exercise_date: "",
+      };
+
+      // Clear form fields
+      document.getElementById("projectName").value = "";
+      document.getElementById("projectOrg").value = "";
+      document.getElementById("projectType").value = "";
+      document.getElementById("projectDate").value = "";
+
+      // Remove project data from localStorage
+      try {
+        localStorage.removeItem("smartexProject");
+      } catch (e) {
+        console.warn("Could not remove project from localStorage:", e);
+      }
+
+      // Reset uploaded files list
+      uploadedFiles = [];
+      renderMaterialsList();
+
+      // Reset conversation
+      conversation = [];
+      renderConversation();
+
+      // Reset mode selection
+      currentMode = "new_exercise";
+      currentModeDescription = "Start a new emergency exercise from scratch";
+      document.getElementById("selectedMode").textContent =
+        "Selected action: Start a new emergency exercise from scratch";
+
+      // Update context box
+      renderProjectContext();
+    }
+
+    function loadProjectFromStorage() {
+      try {
+        const raw = localStorage.getItem("smartexProject");
+        if (!raw) return;
+        const proj = JSON.parse(raw);
+        if (!proj || typeof proj !== "object") return;
+
+        currentProject = {
+          name: proj.name || "",
+          organisation: proj.organisation || "",
+          exercise_type: proj.exercise_type || "",
+          exercise_date: proj.exercise_date || "",
+        };
+
+        document.getElementById("projectName").value = currentProject.name;
+        document.getElementById("projectOrg").value = currentProject.organisation;
+        document.getElementById("projectType").value = currentProject.exercise_type;
+        document.getElementById("projectDate").value = currentProject.exercise_date;
+
+        renderProjectContext();
+      } catch (e) {
+        console.warn("Could not load project from localStorage:", e);
+      }
+    }
+
+    function selectMode(mode, description) {
+      currentMode = mode;
+      currentModeDescription = description;
+      document.getElementById("selectedMode").textContent =
+        "Selected action: " + description;
+    }
+
+    function addMessage(role, text) {
+      const msg = {
+        role,
+        text,
+        time: new Date()
+      };
+      conversation.push(msg);
+      renderConversation();
+    }
+
+    // Simple markdown renderer: **bold**, *italic*, line breaks
+    function renderMarkdown(mdText) {
+      if (!mdText) return "";
+
+      // 1) Escape basic HTML
+      let safe = mdText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      // 2) Bold: **text**
+      safe = safe.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+      // 3) Italic: *text*
+      safe = safe.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+      // 4) New lines -> <br>
+      safe = safe.replace(/\n/g, "<br>");
+
+      return safe;
+    }
+
+    function renderConversation() {
+      const container = document.getElementById("conversationContainer");
+      container.innerHTML = "";
+      for (const msg of conversation) {
+        const div = document.createElement("div");
+        div.classList.add("message");
+        div.classList.add(msg.role === "user" ? "user" : "assistant");
+
+        const label = document.createElement("div");
+        label.classList.add("message-label");
+        label.textContent = msg.role === "user" ? "You" : "SmartEx";
+
+        const content = document.createElement("div");
+        content.innerHTML = renderMarkdown(msg.text);
+
+        const time = document.createElement("div");
+        time.classList.add("message-time");
+        time.textContent = msg.time.toLocaleString();
+
+        div.appendChild(label);
+        div.appendChild(content);
+        div.appendChild(time);
+
+        container.appendChild(div);
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendToSmartEx() {
+      const userMessage = document.getElementById("userMessage").value.trim();
+
+      const textForConversation =
+        userMessage || "(no additional details were provided)";
+
+      addMessage("user", textForConversation);
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mode: currentMode,
+            user_message: userMessage,
+            project: currentProject,
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          addMessage(
+            "assistant",
+            "Error from backend (" + response.status + "):\n" + errorText
+          );
+          return;
+        }
+
+        const data = await response.json();
+        const reply = data.reply || "(Empty reply from SmartEx)";
+        addMessage("assistant", reply);
+        document.getElementById("userMessage").value = "";
+      } catch (err) {
+        addMessage(
+          "assistant",
+          "Network or connection error while contacting SmartEx:\n" + err
+        );
+      }
+    }
+
+    function renderMaterialsList() {
+      const ul = document.getElementById("materialsList");
+      ul.innerHTML = "";
+      if (uploadedFiles.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "No materials uploaded in this session.";
+        ul.appendChild(li);
+        return;
+      }
+      for (const name of uploadedFiles) {
+        const li = document.createElement("li");
+        li.textContent = name;
+        ul.appendChild(li);
+      }
+    }
+
+    async function uploadMaterial() {
+      const input = document.getElementById("materialsInput");
+      const file = input.files[0];
+      if (!file) {
+        alert("Please select a file before uploading.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("project_name", currentProject.name || "default");
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          alert("Error uploading file (" + response.status + "):\n" + errorText);
+          return;
+        }
+
+        const data = await response.json();
+        const displayedName = data.filename || file.name;
+
+        uploadedFiles.push(displayedName);
+        renderMaterialsList();
+        input.value = "";
+
+        // Message in conversation: confirm upload + analysis
+        addMessage(
+          "assistant",
+          "The file '" +
+            displayedName +
+            "' has been uploaded and analysed. I can now use it as a reference when you ask me to align exercise products or reports with it."
+        );
+      } catch (err) {
+        alert("Network or connection error while uploading file:\n" + err);
+      }
+    }
+
+    function downloadConversationPDF() {
+      if (conversation.length === 0) {
+        alert("No conversation to export yet.");
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+      const marginLeft = 40;
+      let y = 40;
+      const lineHeight = 14;
+      const maxWidth = 500;
+
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(12);
+
+      doc.text("SmartEx – Conversation Export", marginLeft, y);
+      y += 24;
+
+      // Project header at the top of the PDF
+      const headerLines = getProjectHeaderLines();
+      if (headerLines.length > 0) {
+        const lines = doc.splitTextToSize(headerLines.join("\n"), maxWidth);
+        doc.text(lines, marginLeft, y);
+        y += lineHeight * lines.length + lineHeight;
+      }
+
+      for (const msg of conversation) {
+        const header = (msg.role === "user" ? "You" : "SmartEx") +
+          " [" + msg.time.toLocaleString() + "]:";
+        const linesHeader = doc.splitTextToSize(header, maxWidth);
+        const linesBody = doc.splitTextToSize(msg.text, maxWidth);
+
+        if (y + (linesHeader.length + linesBody.length) * lineHeight > 800) {
+          doc.addPage();
+          y = 40;
+        }
+
+        doc.setFont("Helvetica", "bold");
+        doc.text(linesHeader, marginLeft, y);
+        y += lineHeight * linesHeader.length;
+
+        doc.setFont("Helvetica", "normal");
+        doc.text(linesBody, marginLeft, y);
+        y += lineHeight * linesBody.length + lineHeight;
+      }
+
+      doc.save("SmartEx_conversation.pdf");
+    }
+
+    function downloadLastReply() {
+      const lastAssistant = [...conversation].reverse().find(m => m.role === "assistant");
+      if (!lastAssistant) {
+        alert("No SmartEx reply to download yet.");
+        return;
+      }
+      const text = lastAssistant.text;
+      const headerLines = getProjectHeaderLines();
+      let fullText = "";
+      if (headerLines.length > 0) {
+        fullText += headerLines.join("\n") + "\n\n";
+      }
+      fullText += text;
+
+      const blob = new Blob([fullText], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "SmartEx_document.txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    async function exportDossierZip() {
+      if (!currentProject.name && conversation.length === 0) {
+        alert("No project information or conversation to export yet.");
+        return;
+      }
+
+      const zip = new JSZip();
+
+      // Project file with header
+      const projLines = ["SmartEx – Exercise project"];
+      const headerLines = getProjectHeaderLines();
+      if (headerLines.length > 0) {
+        projLines.push("");
+        for (const line of headerLines) {
+          projLines.push(line);
+        }
+      }
+      if (uploadedFiles.length > 0) {
+        projLines.push("");
+        projLines.push("Uploaded materials (session view, filenames only):");
+        for (const name of uploadedFiles) {
+          projLines.push(" - " + name);
+        }
+      }
+      zip.file("project.txt", projLines.join("\n"));
+
+      // Conversation file, with project header at the top
+      if (conversation.length > 0) {
+        const convLines = [];
+        if (headerLines.length > 0) {
+          convLines.push(...headerLines);
+          convLines.push("");
+        }
+        convLines.push("SmartEx – Conversation log", "");
+        for (const msg of conversation) {
+          const who = msg.role === "user" ? "You" : "SmartEx";
+          convLines.push(
+            `${who} [${msg.time.toLocaleString()}]:`
+          );
+          convLines.push(msg.text);
+          convLines.push("");
+        }
+        zip.file("conversation.txt", convLines.join("\n"));
+      }
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = (currentProject.name || "SmartEx_dossier") + ".zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Initialise
+    loadProjectFromStorage();
+    renderMaterialsList();
+    addMessage(
+      "assistant",
+      "Welcome! Define your exercise project, select what you want to work on, optionally add details, then click 'Send to SmartEx' to start."
+    );
+  </script>
+</body>
+</html>
