@@ -110,27 +110,12 @@
     button:hover {
       background-color: #e7e7e7;
     }
-
-    /* Titolo e descrizione per i pulsanti di fase */
-    .phase-button-title {
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      display: block;
-    }
-    .phase-button-desc {
-      font-size: 0.8rem;
-      font-weight: normal;
-      display: block;
-      margin-top: 2px;
-    }
-
     #sendBtn {
       padding: 10px 18px;
       border-radius: 6px;
-      border: 1px solid #007acc;
-      background-color: #008CBA;
-      color: white;
+      border: 1px solid #888;
+      background-color: #ffffff;
+      color: #000000;
       font-weight: bold;
       cursor: pointer;
       margin-top: 8px;
@@ -138,7 +123,7 @@
       text-align: center;
     }
     #sendBtn:hover {
-      background-color: #0074a1;
+      background-color: #f0f0f0;
     }
     .secondary-btn {
       padding: 8px 12px;
@@ -173,15 +158,14 @@
       background-color: #ffffff;
       color: #000000;
       padding: 12px;
-      min-height: 200px;
-      max-height: 500px;
+      min-height: 750px;  /* più alto per allineare le colonne */
+      max-height: 750px;
       overflow-y: auto;
     }
     .message {
       margin-bottom: 10px;
       padding: 8px 10px;
       border-radius: 6px;
-      white-space: pre-wrap;
     }
     .user {
       background-color: #d9edf7;
@@ -290,46 +274,46 @@
         <h3>What do you want SmartEx to help with?</h3>
 
         <div class="buttons">
-          <button onclick="selectMode('phase_0', 'PHASE 0 – START FROM SCRATCH')">
-            <span class="phase-button-title">PHASE 0 – START FROM SCRATCH</span>
-            <span class="phase-button-desc">
-              Let SmartEx quickly assess your context and suggest which phase to use next.
+          <button onclick="selectMode('phase_0', 'PHASE 0 – ENTRY & ORCHESTRATION')">
+            <strong>PHASE 0 – ENTRY & ORCHESTRATION</strong><br />
+            <span style="font-size: 0.85rem; font-weight: normal;">
+              Start from scratch, explain your context and let SmartEx suggest which phase to use next.
             </span>
           </button>
           <button onclick="selectMode('phase_1', 'PHASE 1 – ANALYSIS & OBJECTIVES')">
-            <span class="phase-button-title">PHASE 1 – ANALYSIS & OBJECTIVES</span>
-            <span class="phase-button-desc">
-              Work on organisational context, risks, objectives and capabilities to be tested.
+            <strong>PHASE 1 – ANALYSIS & OBJECTIVES</strong><br />
+            <span style="font-size: 0.85rem; font-weight: normal;">
+              Clarify context, risks, stakeholders, constraints, learning objectives and capabilities to be tested.
             </span>
           </button>
           <button onclick="selectMode('phase_2', 'PHASE 2 – EXERCISE / GAME DESIGN')">
-            <span class="phase-button-title">PHASE 2 – EXERCISE / GAME DESIGN</span>
-            <span class="phase-button-desc">
-              Define structure, agenda, roles, timing and basic governance for your exercise or game.
+            <strong>PHASE 2 – EXERCISE / GAME DESIGN</strong><br />
+            <span style="font-size: 0.85rem; font-weight: normal;">
+              Design the exercise structure, agenda, roles, timing, mechanics and governance arrangements.
             </span>
           </button>
-          <button onclick="selectMode('phase_3', 'PHASE 3 – SCENARIO & MEL')">
-            <span class="phase-button-title">PHASE 3 – SCENARIO & MEL</span>
-            <span class="phase-button-desc">
-              Generate a narrative scenario and a Master Events List aligned with your objectives.
+          <button onclick="selectMode('phase_3', 'PHASE 3 – SCENARIO, MEL & MATERIALS')">
+            <strong>PHASE 3 – SCENARIO, MEL & MATERIALS</strong><br />
+            <span style="font-size: 0.85rem; font-weight: normal;">
+              Build the narrative scenario, Master Events List (MEL) and draft handbooks or checklists.
             </span>
           </button>
           <button onclick="selectMode('phase_4', 'PHASE 4 – EVALUATION & IMPROVEMENT')">
-            <span class="phase-button-title">PHASE 4 – EVALUATION & IMPROVEMENT</span>
-            <span class="phase-button-desc">
+            <strong>PHASE 4 – EVALUATION & IMPROVEMENT</strong><br />
+            <span style="font-size: 0.85rem; font-weight: normal;">
               Evaluate an exercise, structure an After-Action Report and define an improvement plan.
             </span>
           </button>
         </div>
 
         <div class="selected-mode" id="selectedMode">
-          Selected phase: PHASE 0 – START FROM SCRATCH
+          Selected phase: PHASE 0 – ENTRY & ORCHESTRATION
         </div>
 
-       <h3>Your prompt, details or questions</h3>
-<textarea
-  id="userMessage"
-  placeholder="Add information or ask SmartEx any question"></textarea>
+        <h3>Your prompt, details or questions</h3>
+        <textarea
+          id="userMessage"
+          placeholder="Add information or ask SmartEx any question"></textarea>
 
         <!-- Materials / documents -->
         <h3>Materials / documents</h3>
@@ -368,6 +352,7 @@
           <button class="secondary-btn" onclick="downloadConversationPDF()">Download conversation as PDF</button>
           <button class="secondary-btn" onclick="downloadLastReply()">Download last reply as text document</button>
           <button class="secondary-btn" onclick="exportDossierZip()">Export exercise dossier (ZIP)</button>
+          <button class="secondary-btn" onclick="downloadProjectSummary()">Download project summary as text</button>
         </div>
       </div>
     </div>
@@ -380,7 +365,7 @@
 
   <script>
     let currentMode = "phase_0";
-    let currentModeDescription = "PHASE 0 – START FROM SCRATCH";
+    let currentModeDescription = "PHASE 0 – ENTRY & ORCHESTRATION";
 
     let currentProject = {
       name: "",
@@ -473,11 +458,11 @@
       conversation = [];
       renderConversation();
 
-      // Reset mode selection to Phase 0
+      // Reset mode selection
       currentMode = "phase_0";
-      currentModeDescription = "PHASE 0 – START FROM SCRATCH";
+      currentModeDescription = "PHASE 0 – ENTRY & ORCHESTRATION";
       document.getElementById("selectedMode").textContent =
-        "Selected phase: PHASE 0 – START FROM SCRATCH";
+        "Selected phase: PHASE 0 – ENTRY & ORCHESTRATION";
 
       // Update context box
       renderProjectContext();
@@ -509,11 +494,19 @@
     }
 
     function selectMode(mode, description) {
-      currentMode = mode;
-      currentModeDescription = description;
-      document.getElementById("selectedMode").textContent =
-        "Selected phase: " + description;
-    }
+  currentMode = mode;
+  currentModeDescription = description;
+  document.getElementById("selectedMode").textContent =
+    "Selected phase: " + description;
+
+  // Log del cambio fase nella conversazione
+  addMessage(
+    "assistant",
+    "Phase changed to: " +
+      description +
+      ". SmartEx will now work within this phase."
+  );
+}
 
     function addMessage(role, text) {
       const msg = {
@@ -584,7 +577,6 @@
       addMessage("user", textForConversation);
 
       try {
-        // chat call
         const response = await fetch("https://smartex-backend.onrender.com/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -645,7 +637,6 @@
       formData.append("file", file);
 
       try {
-        // upload call
         const response = await fetch("https://smartex-backend.onrender.com/upload", {
           method: "POST",
           body: formData
@@ -752,6 +743,26 @@
       URL.revokeObjectURL(url);
     }
 
+    function downloadProjectSummary() {
+      const headerLines = getProjectHeaderLines();
+      if (headerLines.length === 0) {
+        alert("No project information saved yet.");
+        return;
+      }
+      const text = headerLines.join("\n");
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "SmartEx_project_summary.txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
     async function exportDossierZip() {
       if (!currentProject.name && conversation.length === 0) {
         alert("No project information or conversation to export yet.");
@@ -811,7 +822,7 @@
     renderMaterialsList();
     addMessage(
       "assistant",
-      "Welcome! Define your exercise project, then choose a phase: Phase 0 to let me help you start from scratch, or Phases 1–4 if you already know what you want to work on. Optionally add details, then click 'Send to SmartEx' to start."
+      "Welcome! Define your exercise project, select what you want to work on, optionally add details, then click 'Send to SmartEx' to start."
     );
   </script>
 </body>
